@@ -272,12 +272,27 @@ app.delete('/salaries/:id', async (req, res) => {
 });
 
 // Example for Express.js
-app.delete('/salaries/delete-by-date', async (req, res) => {
-    const { date } = req.body;
-    try {
-        await Salary.deleteMany({ date });
-        res.status(200).send('Salaries deleted successfully');
-    } catch (error) {
-        res.status(500).send('Error deleting salaries');
-    }
+// Date all id delete//
+
+app.post('/salaries/delete-by-date', async (req, res) => {
+  const { date } = req.body;
+
+  try {
+      const targetDate = new Date(date).toISOString().split('T')[0];
+      
+      // Delete all salary records with the matching date
+      const result = await Salary.deleteMany({
+          date: { $regex: `^${targetDate}` }
+      });
+
+      if (result.deletedCount > 0) {
+          res.json({ message: 'Delete Successfully' });
+      } else {
+          res.json({ message: 'No records found for the specified date' });
+      }
+  } catch (error) {
+      console.error('Error deleting salaries:', error);
+      res.status(500).json({ message: 'Error deleting salaries' });
+  }
 });
+
