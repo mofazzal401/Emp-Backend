@@ -270,3 +270,14 @@ app.delete('/salaries/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting salary data' });
   }
 });
+
+// Example for Express.js
+app.delete('/salaries/delete-by-date', async (req, res) => {
+    const { date } = req.body;
+    try {
+        await Salary.deleteMany({ date });
+        res.status(200).send('Salaries deleted successfully');
+    } catch (error) {
+        res.status(500).send('Error deleting salaries');
+    }
+});
